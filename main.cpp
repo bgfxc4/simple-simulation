@@ -45,28 +45,37 @@ class Bouncer {
 class Ball {
 	public:
 	float radius = 10;
-	Position vel = Position(10, 0);
-	Position pos = Position(100, 0);
+	float wallBounceCoefficient = 1;
 
-	Position gravity = Position(0, 0.2f);
+	Position vel = Position(0, 0);
+	Position pos = Position(0, 100);
+
+	Position gravity = Position(0.2f, 0);
 	
 	void simulate(sf::RenderWindow& window) {
 		vel += gravity;
 		pos += vel;
-		if (pos.x + radius >= window.getSize().x) {
-			pos.x = window.getSize().x - radius;
-			vel.x *= -1;
-		} else if (pos.x - radius < 0) {
-			pos.x = 0 + radius;
-			vel.x *= -1;
+		if (pos.x + 2*radius >= window.getSize().x) {
+			// if collided, move right for the distance the ball clipped into the wall
+			float clipped = (pos.x + 2*radius) - window.getSize().x;
+			pos.x = (window.getSize().x - 2*radius) - clipped;
+
+			vel.x *= -wallBounceCoefficient;
+		} else if (pos.x < 0) {
+			float clipped = -pos.x;
+			pos.x = clipped;
+			vel.x *= -wallBounceCoefficient;
 		}
 
-		if (pos.y + radius >= window.getSize().y) {
-			pos.y = window.getSize().y - radius;
-			vel.y *= -1;
-		} else if (pos.y - radius < 0) {
-			pos.y = 0 + radius;
-			vel.y *= -1;
+		if (pos.y +  2*radius >= window.getSize().y) {
+			// if collided, move up for the distance the ball clipped into the wall
+			float clipped = (pos.y + 2*radius) - window.getSize().y;
+			pos.y = (window.getSize().y -  2 * radius) - clipped;
+			vel.y *= -wallBounceCoefficient;
+		} else if (pos.y < 0) {
+			float clipped = -pos.y; 
+			pos.y = clipped;
+			vel.y *= -wallBounceCoefficient;
 		}
 
 		std::cout << gravity.y << std::endl;
