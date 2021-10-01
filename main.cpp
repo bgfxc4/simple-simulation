@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 class Position {
 	public:
@@ -45,12 +46,12 @@ class Bouncer {
 class Ball {
 	public:
 	float radius = 10;
-	float wallBounceCoefficient = 1;
+	float wallBounceCoefficient = 1.0f;
 
 	Position vel = Position(0, 0);
-	Position pos = Position(0, 100);
+	Position pos = Position(100, 0);
 
-	Position gravity = Position(0.2f, 0);
+	Position gravity = Position(0, 1.0f);
 	
 	void simulate(sf::RenderWindow& window) {
 		vel += gravity;
@@ -58,27 +59,28 @@ class Ball {
 		if (pos.x + 2*radius >= window.getSize().x) {
 			// if collided, move right for the distance the ball clipped into the wall
 			float clipped = (pos.x + 2*radius) - window.getSize().x;
-			pos.x = (window.getSize().x - 2*radius) - clipped;
+			pos.x = (window.getSize().x - 2*radius) - (clipped * wallBounceCoefficient);
 
-			vel.x *= -wallBounceCoefficient;
+			vel.x = (vel.x < 1) ? 0 : -wallBounceCoefficient * vel.x;
 		} else if (pos.x < 0) {
 			float clipped = -pos.x;
-			pos.x = clipped;
-			vel.x *= -wallBounceCoefficient;
+			pos.x = clipped * wallBounceCoefficient;
+			vel.x = (vel.x > -1) ? 0 : -wallBounceCoefficient * vel.x;
 		}
 
 		if (pos.y +  2*radius >= window.getSize().y) {
 			// if collided, move up for the distance the ball clipped into the wall
 			float clipped = (pos.y + 2*radius) - window.getSize().y;
-			pos.y = (window.getSize().y -  2 * radius) - clipped;
-			vel.y *= -wallBounceCoefficient;
+			pos.y = (window.getSize().y -  2 * radius) - (clipped * wallBounceCoefficient);
+
+			vel.y = (vel.y < 1) ? 0 : -wallBounceCoefficient * vel.y;
+			std::cout << vel.y << std::endl;
 		} else if (pos.y < 0) {
 			float clipped = -pos.y; 
-			pos.y = clipped;
-			vel.y *= -wallBounceCoefficient;
-		}
+			pos.y = clipped * wallBounceCoefficient;
 
-		std::cout << gravity.y << std::endl;
+			vel.y = (vel.y > -1) ? 0 : -wallBounceCoefficient * vel.y;
+		}
 	}
 
 	void draw(sf::RenderWindow& window) {
