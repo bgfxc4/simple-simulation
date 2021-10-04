@@ -12,7 +12,7 @@ void Ball::simulate(sf::RenderWindow& window, std::vector<Bouncer>& bouncers) {
 
 void Ball::draw(sf::RenderWindow& window) {
 	sf::CircleShape circle(radius);
-	circle.setFillColor(sf::Color(150, 50, 250));
+	circle.setFillColor(sf::Color(255, 0, 0));
 	circle.setPosition(pos.x - radius, pos.y - radius);
 	window.draw(circle);
 }

@@ -22,6 +22,8 @@ class Bouncer {
 	bool isPointOnSegment(Position p, Position q, Position r);
 	int orientationOfPoints(Position p, Position q, Position r);
 	bool checkIfIntersect(Position p1, Position q1, Position p2, Position q2);
+	float distanceBetweenPoints(Position a, Position b);
+	float distanceBetweenPointAndLine(Position l1, Position l2, Position p);
 
 	Position rotateRectPoint(Position point, int angle);
 	std::vector<Position> getCorners(); 

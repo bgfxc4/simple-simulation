@@ -11,10 +11,10 @@ class Ball {
 	float radius = 10;
 	float wallBounceCoefficient = 1.0f;
 
-	Position vel = Position(0, -1.0f);
+	Position vel = Position(40, 20.0f);
 	Position pos = Position(100, 0);
 
-	Position gravity = Position(0, 0.0f);
+	Position gravity = Position(0, 1.0f);
 	
 	void simulate(sf::RenderWindow& window, std::vector<Bouncer>& bouncers);
 	void draw(sf::RenderWindow& window);

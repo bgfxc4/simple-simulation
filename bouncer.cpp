@@ -29,10 +29,13 @@ bool Bouncer::checkBallCollision(Ball* ball) {
 	std::vector<Position> corners = getCorners();
 	float dMax = 0;
 	float dMin = 999999;
+	Position last_p = corners[corners.size() - 1];
 	for (Position p : corners) {
-		float dist = sqrt(pow((ball->pos.x - p.x), 2) + pow((ball->pos.y - p.y), 2));
+		//float dist = distanceBetweenPoints(ball->pos, p);
+		float dist = distanceBetweenPointAndLine(p, last_p, ball->pos);
 		dMax = std::max(dist, dMax);
 		dMin = std::min(dist, dMin);
+		last_p = p;
 	}
 
 	bool pointInPolygon = checkPointInPolygon(ball->pos);
@@ -70,6 +73,25 @@ bool Bouncer::checkPointInPolygon(Position p) {
 	} while (i != 0);
 
 	return (count % 2 == 1);
+}
+
+float dist2(Position a, Position b) {
+	return pow(a.x - b.x, 2) + pow(a.y - b.y, 2);
+}
+
+// returns the minimal distance between a point and a line segment between two points
+float Bouncer::distanceBetweenPointAndLine(Position l1, Position l2, Position p) {
+	float lsqu = dist2(l1, l2);
+	if (lsqu == 0.0f) 
+		return distanceBetweenPoints(l1, p); // if l1 == l2
+	
+	float t = ((p.x - l1.x) * (l2.x - l1.x) + (p.y - l1.y) * (l2.y - l1.y)) / lsqu;
+	t = std::max(0.0f, std::min(1.0f, t));
+	return sqrt(dist2(p, Position(l1.x + t * (l2.x - l1.x), l1.y + t * (l2.y - l1.y))));
+}
+
+float Bouncer::distanceBetweenPoints(Position a, Position b) {
+	return sqrt(pow((b.x - a.x), 2) + pow((b.y - a.y), 2));
 }
 
 // checks if point q is on segmant pr for three collinear points p, q, r
